@@ -10,8 +10,6 @@ const MODEL = "gemini-3.5-flash-lite";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-
-
 const interviewReportSchema = z.object({
     candidateSummary: z.string(),
     matchScore: z.number().min(0).max(100),
@@ -223,29 +221,16 @@ IMPORTANT STRUCTURE RULES:
             try {
                 parsedReport = JSON.parse(response.text);
             } catch {
-                console.error("Invalid Gemini JSON:", response.text);
                 throw new Error("Gemini returned invalid JSON.");
             }
 
             const result = interviewReportSchema.safeParse(parsedReport);
 
             if (!result.success) {
-                console.error(
-                    "Gemini raw report:",
-                    JSON.stringify(parsedReport, null, 2)
-                );
-
-                console.error(
-                    "Validation errors:",
-                    JSON.stringify(result.error.issues, null, 2)
-                );
-
                 throw new Error(
                     "Gemini report does not match the required schema."
                 );
             }
-
-            console.log("Interview report generated successfully.");
 
             return result.data;
         } catch (error) {
@@ -257,17 +242,10 @@ IMPORTANT STRUCTURE RULES:
                 );
 
             if (!retryable || attempt === 3) {
-                console.error("Interview Report Error:", message);
                 throw error;
             }
 
             const delay = 1000 * 2 ** (attempt - 1);
-
-            console.log(
-                `Gemini temporarily unavailable. Retrying in ${
-                    delay / 1000
-                } seconds...`
-            );
 
             await sleep(delay);
         }
@@ -277,4 +255,3 @@ IMPORTANT STRUCTURE RULES:
 module.exports = {
     generateInterviewReport,
 };
- 

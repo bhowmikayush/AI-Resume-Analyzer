@@ -1,4 +1,4 @@
- 
+  
 require("dotenv").config();
 
 const app = require("./src/app");
@@ -28,8 +28,7 @@ async function startServer() {
             jobDescriptionData,
         });
 
-        console.log("Interview Report:");
-        console.log(JSON.stringify(report, null, 2));
+         
     } catch (error) {
         console.error("Application Error:", error.message);
     }
